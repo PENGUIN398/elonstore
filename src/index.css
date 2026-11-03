@@ -1,0 +1,15 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    @apply bg-zinc-950 text-zinc-100 antialiased;
+  }
+  body {
+    @apply min-h-screen;
+  }
+  ::selection {
+    @apply bg-emerald-400/30 text-zinc-50;
+  }
+}
