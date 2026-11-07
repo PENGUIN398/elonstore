@@ -97,7 +97,7 @@ export default function EscrowPage() {
       if (rpcError) {
         setFundError(getErrorMessage(rpcError));
       } else {
-        setFundDone(`${formatMoney(cents)} payment submitted for verification. Escrow will update after the transfer is confirmed.`);
+        setFundDone(`${formatMoney(cents)} has been added to your escrow balance.`);
         setAmount('');
         setReference('');
       }

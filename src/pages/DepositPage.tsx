@@ -8,7 +8,7 @@ import { supabase } from '@/lib/supabase';
 import Trc20AddressCard from '@/components/Trc20AddressCard';
 
 export default function DepositPage() {
-  const { balanceCents } = useAccount();
+  const { balanceCents, refreshAccount } = useAccount();
   const [amount, setAmount] = useState('');
   const [txid, setTxid] = useState('');
   const [saving, setSaving] = useState(false);
@@ -37,7 +37,8 @@ export default function DepositPage() {
     if (rpcError) {
       setError(getErrorMessage(rpcError));
     } else {
-      setDone(`${formatMoney(cents)} payment submitted for verification. Once confirmed, it will be added to this account's wallet.`);
+      await refreshAccount();
+      setDone(`${formatMoney(cents)} has been added to your wallet.`);
       setAmount('');
       setTxid('');
     }
@@ -46,7 +47,7 @@ export default function DepositPage() {
 
   return (
     <div>
-      <PageHeader eyebrow="Wallet" title="Deposit" description="Submit a Binance TRC20 payment for review. Once confirmed, the listed amount is credited to your wallet." />
+      <PageHeader eyebrow="Wallet" title="Deposit" description="Submit your Binance TRC20 transaction ID and amount. The listed amount is added to your wallet immediately." />
       <div className="mb-6">
         <Trc20AddressCard />
       </div>
@@ -55,7 +56,7 @@ export default function DepositPage() {
           <form onSubmit={handleSubmit} className="space-y-6" noValidate>
             <div>
               <h2 className="text-lg font-semibold text-zinc-100">Submit TXID</h2>
-              <p className="mt-1 text-sm text-zinc-500">The amount is credited to this signed-in account after a support agent confirms the TXID.</p>
+              <p className="mt-1 text-sm text-zinc-500">The amount you enter is added to this account's wallet right away.</p>
             </div>
             <Field label="Amount (USDT)">
               <input
@@ -83,7 +84,7 @@ export default function DepositPage() {
             )}
             <Button type="submit" loading={saving} className="w-full">
               <ArrowDownToLine className="h-4 w-4" aria-hidden />
-              Submit payment for review
+              Add to wallet
             </Button>
           </form>
         </Card>
