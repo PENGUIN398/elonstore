@@ -20,6 +20,7 @@ import NewsPage from '@/pages/NewsPage';
 import SupportPage from '@/pages/SupportPage';
 import MessagesPage from '@/pages/MessagesPage';
 import InboxPage from '@/pages/InboxPage';
+import PaymentReviewPage from '@/pages/PaymentReviewPage';
 import NotificationBell from '@/components/NotificationBell';
 
 type PageProps = { onNavigate: (page: PageId) => void };
@@ -42,6 +43,7 @@ const PAGES: Record<PageId, ComponentType<PageProps>> = {
   support: SupportPage,
   messages: MessagesPage,
   inbox: InboxPage,
+  'payment-reviews': PaymentReviewPage,
 };
 
 function SidebarContent({

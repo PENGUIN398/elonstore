@@ -7,7 +7,6 @@ import { formatMoney, parseDollarsToCents } from '@/lib/format';
 import { getErrorMessage } from '@/lib/errors';
 import { useLoad } from '@/lib/hooks';
 import { supabase } from '@/lib/supabase';
-import { unwrap } from '@/lib/query';
 import type { Order } from '@/lib/types';
 import Trc20AddressCard from '@/components/Trc20AddressCard';
 
@@ -19,28 +18,25 @@ export default function EscrowPage() {
   const [error, setError] = useState<string | null>(null);
 
   const { data, error: loadError, loading, reload } = useLoad(
-    async () =>
-      unwrap<{ escrowBalance: number; orders: Order[] }>(
-        (async () => {
-          const walletRes = await supabase
-            .from('wallets')
-            .select('escrow_balance_cents')
-            .eq('user_id', profile.id)
-            .maybeSingle();
-          if (walletRes.error) throw new Error(walletRes.error.message);
-          const ordersRes = await supabase
-            .from('orders')
-            .select('*')
-            .eq('buyer_id', profile.id)
-            .in('status', ['escrow', 'delivered'])
-            .order('created_at', { ascending: false });
-          if (ordersRes.error) throw new Error(ordersRes.error.message);
-          return {
-            escrowBalance: (walletRes.data?.escrow_balance_cents as number | undefined) ?? 0,
-            orders: (ordersRes.data ?? []) as Order[],
-          };
-        })() as Promise<{ escrowBalance: number; orders: Order[] }>
-      ),
+    async () => {
+      const walletRes = await supabase
+        .from('wallets')
+        .select('escrow_balance_cents')
+        .eq('user_id', profile.id)
+        .maybeSingle();
+      if (walletRes.error) throw new Error(walletRes.error.message);
+      const ordersRes = await supabase
+        .from('orders')
+        .select('*')
+        .eq('buyer_id', profile.id)
+        .in('status', ['escrow', 'delivered'])
+        .order('created_at', { ascending: false });
+      if (ordersRes.error) throw new Error(ordersRes.error.message);
+      return {
+        escrowBalance: (walletRes.data?.escrow_balance_cents as number | undefined) ?? 0,
+        orders: (ordersRes.data ?? []) as Order[],
+      };
+    },
     [profile.id]
   );
 

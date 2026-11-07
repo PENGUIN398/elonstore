@@ -35,7 +35,8 @@ export type PageId =
   | 'news'
   | 'support'
   | 'messages'
-  | 'inbox';
+  | 'inbox'
+  | 'payment-reviews';
 
 export type NavItem = {
   id: PageId;
@@ -85,6 +86,7 @@ export const NAV_GROUPS: NavGroup[] = [
       { id: 'support', label: 'Support & disputes', icon: MessageCircle },
       { id: 'messages', label: 'Order messages', icon: MessageCircle },
       { id: 'inbox', label: 'Customer inbox', icon: Inbox, supportAgentOnly: true },
+      { id: 'payment-reviews', label: 'Payment reviews', icon: ClipboardList, supportAgentOnly: true },
     ],
   },
 ];

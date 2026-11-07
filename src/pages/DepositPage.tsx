@@ -37,7 +37,7 @@ export default function DepositPage() {
     if (rpcError) {
       setError(getErrorMessage(rpcError));
     } else {
-      setDone(`${formatMoney(cents)} payment submitted for verification. Your balance will update after the transfer is confirmed.`);
+      setDone(`${formatMoney(cents)} payment submitted for verification. Once confirmed, it will be added to this account's wallet.`);
       setAmount('');
       setTxid('');
     }
@@ -46,7 +46,7 @@ export default function DepositPage() {
 
   return (
     <div>
-      <PageHeader eyebrow="Wallet" title="Deposit" description="Add funds to your elonstore wallet. Every deposit is escrow-protected and easy to withdraw anytime." />
+      <PageHeader eyebrow="Wallet" title="Deposit" description="Submit a Binance TRC20 payment for review. Once confirmed, the listed amount is credited to your wallet." />
       <div className="mb-6">
         <Trc20AddressCard />
       </div>
@@ -55,9 +55,9 @@ export default function DepositPage() {
           <form onSubmit={handleSubmit} className="space-y-6" noValidate>
             <div>
               <h2 className="text-lg font-semibold text-zinc-100">Submit TXID</h2>
-              <p className="mt-1 text-sm text-zinc-500">Submit your completed Binance TRC20 payment for verification.</p>
+              <p className="mt-1 text-sm text-zinc-500">The amount is credited to this signed-in account after a support agent confirms the TXID.</p>
             </div>
-            <Field label="Amount (USD)">
+            <Field label="Amount (USDT)">
               <input
                 className={inputClass}
                 inputMode="decimal"
