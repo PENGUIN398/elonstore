@@ -1,4 +1,4 @@
-import { ArrowDownLeft, ArrowUpRight, Banknote, Landmark, Package, RotateCcw, ShieldCheck, ShoppingBag, Wallet, type LucideIcon } from 'lucide-react';
+import { ArrowDownLeft, ArrowUpRight, BadgeCheck, Banknote, Landmark, Package, RotateCcw, ShieldCheck, ShoppingBag, Wallet, type LucideIcon } from 'lucide-react';
 import { formatDateTime, formatSignedMoney } from '@/lib/format';
 import type { Transaction, TransactionKind } from '@/lib/types';
 
@@ -12,6 +12,7 @@ const KIND_META: Record<TransactionKind, { label: string; icon: LucideIcon }> = 
   sale: { label: 'Sale', icon: Package },
   escrow_fund: { label: 'To escrow', icon: ShieldCheck },
   escrow_from_binance: { label: 'Binance to escrow', icon: Landmark },
+  seller_fee: { label: 'Seller activation', icon: BadgeCheck },
 };
 
 export default function TransactionList({ transactions }: { transactions: Transaction[] }) {

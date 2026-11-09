@@ -56,7 +56,8 @@ export type TransactionKind =
   | 'refund'
   | 'sale'
   | 'escrow_fund'
-  | 'escrow_from_binance';
+  | 'escrow_from_binance'
+  | 'seller_fee';
 
 export type Transaction = {
   id: string;

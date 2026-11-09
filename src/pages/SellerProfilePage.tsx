@@ -1,33 +1,36 @@
 import { useState, type ChangeEvent, type FormEvent } from 'react';
-import { BadgeCheck, ImagePlus, Save, Zap } from 'lucide-react';
-import { Badge, Button, Card, Field, Notice, PageHeader, inputClass } from '@/components/ui';
+import { BadgeCheck, ImagePlus, Lock, Save, Zap } from 'lucide-react';
+import { Badge, Button, Card, Field, Modal, Notice, PageHeader, inputClass } from '@/components/ui';
 import ServicesSection from '@/components/ServicesSection';
 import ListingFormModal from '@/components/ListingFormModal';
 import { useAccount } from '@/context/auth';
 import { getErrorMessage } from '@/lib/errors';
+import { formatMoney } from '@/lib/format';
 import { supabase } from '@/lib/supabase';
 import { PROFILE_SELECT, type Profile } from '@/lib/types';
 
 const HANDLE_PATTERN = /^[a-z0-9_]{3,24}$/;
 
 export default function SellerProfilePage() {
-  const { profile, setProfile } = useAccount();
+  const { profile, setProfile, balanceCents, refreshAccount } = useAccount();
   const [handle, setHandle] = useState(profile.handle);
   const [displayName, setDisplayName] = useState(profile.display_name);
   const [avatarUrl, setAvatarUrl] = useState(profile.avatar_url);
   const [bio, setBio] = useState(profile.bio);
-  const [isSeller, setIsSeller] = useState(profile.is_seller);
+  const [isSeller] = useState(profile.is_seller);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [flashSaleOpen, setFlashSaleOpen] = useState(false);
+  const [sellerFeeOpen, setSellerFeeOpen] = useState(false);
+  const [sellerFeeSaving, setSellerFeeSaving] = useState(false);
+  const [sellerFeeError, setSellerFeeError] = useState<string | null>(null);
 
   const dirty =
     handle !== profile.handle ||
     displayName !== profile.display_name ||
-    bio !== profile.bio ||
-    isSeller !== profile.is_seller;
+    bio !== profile.bio;
 
   const handleAvatarChange = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -102,7 +105,6 @@ export default function SellerProfilePage() {
         handle: cleanHandle,
         display_name: displayName.trim(),
         bio: bio.trim(),
-        is_seller: isSeller,
       })
       .eq('id', profile.id)
       .select(PROFILE_SELECT)
@@ -125,6 +127,19 @@ export default function SellerProfilePage() {
     setProfile(data as Profile);
     setHandle(cleanHandle);
     setSaved(true);
+  };
+
+  const handleBecomeSeller = async () => {
+    setSellerFeeError(null);
+    setSellerFeeSaving(true);
+    const { error: rpcError } = await supabase.rpc('become_seller');
+    if (rpcError) {
+      setSellerFeeError(getErrorMessage(rpcError, 'We could not process the seller activation. Please try again.'));
+    } else {
+      await refreshAccount();
+      setSellerFeeOpen(false);
+    }
+    setSellerFeeSaving(false);
   };
 
   return (
@@ -237,12 +252,14 @@ export default function SellerProfilePage() {
                   </span>
                 </span>
               </span>
-              <input
-                type="checkbox"
-                checked={isSeller}
-                onChange={(e) => setIsSeller(e.target.checked)}
-                className="h-5 w-5 accent-emerald-400"
-              />
+              {isSeller ? (
+                <span className="text-xs font-semibold text-emerald-300">Active</span>
+              ) : (
+                <Button type="button" variant="secondary" className="px-3 py-2 text-xs" onClick={() => { setSellerFeeError(null); setSellerFeeOpen(true); }}>
+                  <Lock className="h-3.5 w-3.5" aria-hidden />
+                  Pay $100 to unlock
+                </Button>
+              )}
             </label>
 
             {error && <Notice tone="error">{error}</Notice>}
@@ -271,6 +288,42 @@ export default function SellerProfilePage() {
           onSaved={() => undefined}
         />
       )}
+
+      <Modal open={sellerFeeOpen} title="Become a seller" onClose={() => setSellerFeeOpen(false)}>
+        <div className="space-y-5">
+          <div className="flex items-center gap-3">
+            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-400/10 text-emerald-300">
+              <BadgeCheck className="h-5 w-5" aria-hidden />
+            </div>
+            <div>
+              <p className="text-lg font-semibold text-zinc-100">One-time $100 payment</p>
+              <p className="text-sm text-zinc-500">Unlock seller mode and start listing products and services.</p>
+            </div>
+          </div>
+          <div className="rounded-2xl border border-zinc-800 bg-zinc-950/60 p-4 space-y-2">
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-zinc-400">Activation fee</span>
+              <span className="font-semibold tabular-nums text-zinc-100">$100.00</span>
+            </div>
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-zinc-400">Wallet balance</span>
+              <span className="font-semibold tabular-nums text-zinc-100">{formatMoney(balanceCents)}</span>
+            </div>
+            <div className="flex items-center justify-between text-sm border-t border-zinc-800 pt-2">
+              <span className="text-zinc-400">Balance after</span>
+              <span className="font-semibold tabular-nums text-zinc-100">{formatMoney(Math.max(balanceCents - 10000, 0))}</span>
+            </div>
+          </div>
+          {balanceCents < 10000 && (
+            <Notice tone="error">You need at least $100.00 in your wallet. Deposit funds first, then come back to unlock seller mode.</Notice>
+          )}
+          {sellerFeeError && <Notice tone="error">{sellerFeeError}</Notice>}
+          <Button className="w-full" loading={sellerFeeSaving} disabled={balanceCents < 10000} onClick={() => void handleBecomeSeller()}>
+            <Lock className="h-4 w-4" aria-hidden />
+            Pay $100 and become a seller
+          </Button>
+        </div>
+      </Modal>
     </div>
   );
 }
