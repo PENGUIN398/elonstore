@@ -1,4 +1,4 @@
-import { Clock, Package, Zap } from 'lucide-react';
+import { BadgeCheck, Clock, Package, Zap } from 'lucide-react';
 import ServiceCard from '@/components/ServiceCard';
 import { Badge } from '@/components/ui';
 import { formatCountdown, formatMoney } from '@/lib/format';
@@ -57,7 +57,7 @@ function ProductCard({ listing, onOpen }: CardProps) {
             {listing.seller?.avatar_url ? (
               <img src={listing.seller.avatar_url} alt="" className="h-5 w-5 rounded-full object-cover" />
             ) : null}
-            <span>by {sellerName}</span>
+            <span className="flex items-center gap-1">by {sellerName}{listing.seller && listing.seller.sales_count > 1100 && <BadgeCheck className="h-3.5 w-3.5 shrink-0 text-emerald-300" aria-hidden />}</span>
           </div>
         </div>
 

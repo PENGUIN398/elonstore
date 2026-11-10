@@ -1,4 +1,4 @@
-import { Zap } from 'lucide-react';
+import { BadgeCheck, Zap } from 'lucide-react';
 import { formatMoney } from '@/lib/format';
 import type { Listing } from '@/lib/types';
 
@@ -33,7 +33,7 @@ export default function ServiceCard({ listing, onOpen }: { listing: Listing; onO
           </div>
         )}
         <div className="min-w-0">
-          <p className="truncate text-sm font-semibold text-zinc-100">{sellerName}</p>
+          <p className="flex items-center gap-1.5 truncate text-sm font-semibold text-zinc-100">{sellerName}{listing.seller && listing.seller.sales_count > 1100 && <BadgeCheck className="h-4 w-4 shrink-0 text-emerald-300" aria-hidden />}</p>
           <p className="text-xs text-zinc-500">
             {orders} {orders === 1 ? 'order' : 'orders'} · Since {listing.seller?.seller_since_year ?? 2018}
           </p>

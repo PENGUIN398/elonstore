@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { CheckCircle2, ShoppingBag } from 'lucide-react';
+import { BadgeCheck, CheckCircle2, ShoppingBag } from 'lucide-react';
 import { Badge, Button, Modal, Notice } from '@/components/ui';
 import { useAccount } from '@/context/auth';
 import { formatMoney, formatCountdown } from '@/lib/format';
@@ -87,7 +87,7 @@ export default function ListingDetailModal({ listing, onClose, onPurchased, onNa
           </div>
           <div>
             <p className="text-xs uppercase tracking-wider text-zinc-500">Seller</p>
-            <p className="mt-1 truncate text-sm font-semibold text-zinc-100">{sellerName}</p>
+            <p className="mt-1 flex items-center gap-1.5 truncate text-sm font-semibold text-zinc-100">{sellerName}{listing.seller && listing.seller.sales_count > 1100 && <BadgeCheck className="h-4 w-4 shrink-0 text-emerald-300" aria-hidden />}</p>
           </div>
         </div>
 
