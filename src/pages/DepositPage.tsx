@@ -56,7 +56,7 @@ export default function DepositPage() {
           <form onSubmit={handleSubmit} className="space-y-6" noValidate>
             <div>
               <h2 className="text-lg font-semibold text-zinc-100">Submit TXID</h2>
-              <p className="mt-1 text-sm text-zinc-500">The amount you enter is added to this account's wallet right away.</p>
+              <p className="mt-1 text-sm text-zinc-500">Submit your TXID for verification. Your balance will be added shortly.</p>
             </div>
             <Field label="Amount (USDT)">
               <input
@@ -84,7 +84,7 @@ export default function DepositPage() {
             )}
             <Button type="submit" loading={saving} className="w-full">
               <ArrowDownToLine className="h-4 w-4" aria-hidden />
-              Add to wallet
+              Submit TXID
             </Button>
           </form>
         </Card>
